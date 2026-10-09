@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Bookings | College Parking</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<nav class="navbar">
+    <div class="brand">
+        🅿️ College Parking
+    </div>
+
+    <div>
+        Welcome, {{ name }}
+
+        <a href="{{ url_for('logout') }}"
+           class="logout">
+            Logout
+        </a>
+    </div>
+</nav>
+
+<main class="parking-page">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+        <div class="alert {{ category }}">{{ message }}</div>
+        {% endfor %}
+    {% endwith %}
+
+    <div class="page-header">
+        <div>
+            <h1>📋 My Bookings</h1>
+            <p>View your parking booking history.</p>
+        </div>
+
+        <a href="{{ url_for('dashboard') }}"
+           class="back-button">
+            ← Dashboard
+        </a>
+    </div>
+
+    {% if bookings %}
+    <div class="booking-list">
+        {% for booking in bookings %}
+        <article class="booking-card">
+            <div class="booking-header">
+                <div>
+                    <h2>🅿️ Slot {{ booking.slot_number }}</h2>
+                    <p class="booking-id">Booking ID: {{ booking.id }}</p>
+                </div>
+
+                <span class="booking-status {{ booking.status|lower }}">
+                    {{ booking.status }}
+                </span>
+            </div>
+
+            <div class="booking-details">
+                <p>🚗 <strong>Vehicle:</strong> {{ booking.vehicle_number }}</p>
+                <p>🚘 <strong>Vehicle Type:</strong> {{ booking.vehicle_type }}</p>
+                <p>📅 <strong>Date:</strong> {{ booking.booking_date }}</p>
+                <p>🕐 <strong>Start Time:</strong> {{ booking.start_time }}</p>
+                <p>🕐 <strong>End Time:</strong> {{ booking.end_time }}</p>
+                <p>📍 <strong>Location:</strong> {{ booking.location }}</p>
+                <p><strong>Status:</strong> {{ booking.status }}</p>
+            </div>
+
+            {% if booking.status|lower == "active" %}
+            <form method="POST"
+                  action="{{ url_for('cancel_booking', booking_id=booking.id) }}">
+                <button type="submit"
+                        class="cancel-booking-button">
+                    Cancel Booking
+                </button>
+            </form>
+            {% endif %}
+        </article>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-message">
+        <div class="slot-icon">📋</div>
+        <h2>No Bookings Found</h2>
+        <p>You haven't made any parking bookings yet.</p>
+        <a href="{{ url_for('parking_slots') }}"
+           class="back-button">
+            View Parking Slots
+        </a>
+    </div>
+    {% endif %}
+</main>
+
+</body>
+
+</html>

@@ -1,0 +1,30 @@
+@app.route("/parking-slots")
+def parking_slots():
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor(dictionary=True)
+
+        cursor.execute("""
+            SELECT *
+            FROM parking_slots
+            ORDER BY slot_number
+        """)
+
+        slots = cursor.fetchall()
+
+        cursor.close()
+        connection.close()
+
+        return render_template(
+            "parking_slots.html",
+            slots=slots,
+            name=session["name"]
+        )
+
+    except mysql.connector.Error as error:
+
+        return f"Database Error: {error}"

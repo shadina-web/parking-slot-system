@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Book Parking Slot | College Parking</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<nav class="navbar">
+    <div class="brand">🅿️ College Parking</div>
+
+    <div>
+        Welcome, {{ name }}
+        <a href="{{ url_for('logout') }}" class="logout">Logout</a>
+    </div>
+</nav>
+
+<main class="parking-page">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+        <div class="alert {{ category }}">{{ message }}</div>
+        {% endfor %}
+    {% endwith %}
+
+    <div class="page-header">
+        <div>
+            <h1>Book Parking Slot</h1>
+            <p>Choose your vehicle and booking time.</p>
+        </div>
+
+        <a href="{{ url_for('parking_slots') }}" class="back-button">
+            ← Back to Parking Slots
+        </a>
+    </div>
+
+    <section class="booking-form-card">
+        <div class="slot-summary">
+            <h2>Slot {{ slot.slot_number }}</h2>
+            <p><strong>Vehicle Type:</strong> {{ slot.vehicle_type }}</p>
+            <p><strong>Location:</strong> {{ slot.location }}</p>
+        </div>
+
+        {% if vehicles %}
+        <form method="POST"
+              action="{{ url_for('confirm_booking', slot_id=slot.id) }}">
+            <label for="vehicle_id">Vehicle</label>
+            <select id="vehicle_id" name="vehicle_id" required>
+                <option value="">Select a vehicle</option>
+                {% for vehicle in vehicles %}
+                <option value="{{ vehicle.id }}">
+                    {{ vehicle.vehicle_number }} - {{ vehicle.vehicle_model }}
+                </option>
+                {% endfor %}
+            </select>
+
+            <label for="booking_date">Booking Date</label>
+            <input id="booking_date"
+                   type="date"
+                   name="booking_date"
+                   min="{{ today }}"
+                   required>
+
+            <label for="start_time">Start Time</label>
+            <input id="start_time"
+                   type="time"
+                   name="start_time"
+                   required>
+
+            <label for="end_time">End Time</label>
+            <input id="end_time"
+                   type="time"
+                   name="end_time"
+                   required>
+
+            <button type="submit">Confirm Booking</button>
+            <a href="{{ url_for('parking_slots') }}"
+               class="form-cancel-button">
+                Cancel / Back
+            </a>
+        </form>
+        {% else %}
+        <div class="empty-message booking-empty-state">
+            <h2>No suitable vehicle registered.</h2>
+            <p>Register a {{ slot.vehicle_type }} vehicle before booking this slot.</p>
+            <a href="{{ url_for('my_vehicles') }}" class="back-button">
+                Go to My Vehicles
+            </a>
+        </div>
+        {% endif %}
+    </section>
+</main>
+
+</body>
+
+</html>

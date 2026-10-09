@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Vehicles | College Parking</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<nav class="navbar">
+    <div class="brand">
+        🅿️ College Parking
+    </div>
+
+    <div>
+        Welcome, {{ name }}
+
+        <a href="{{ url_for('logout') }}"
+           class="logout">
+            Logout
+        </a>
+    </div>
+</nav>
+
+<main class="parking-page">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+        <div class="alert {{ category }}">{{ message }}</div>
+        {% endfor %}
+    {% endwith %}
+
+    <div class="page-header">
+        <div>
+            <h1>🚗 My Vehicles</h1>
+            <p>View the vehicles registered to your account.</p>
+        </div>
+
+        <a href="{{ url_for('dashboard') }}"
+           class="back-button">
+            ← Dashboard
+        </a>
+    </div>
+
+    {% if vehicles %}
+    <div class="vehicle-grid">
+        {% for vehicle in vehicles %}
+        <article class="vehicle-card {{ vehicle.vehicle_type|lower|replace(' ', '-') }}">
+            <div class="vehicle-icon">🚗</div>
+            <div>
+                <h2>{{ vehicle.vehicle_number }}</h2>
+                <p class="vehicle-type">{{ vehicle.vehicle_type }}</p>
+                <p><strong>Model:</strong> {{ vehicle.vehicle_model }}</p>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-message">
+        <div class="slot-icon">🚗</div>
+        <h2>No Vehicles Registered</h2>
+        <p>You have not registered a vehicle yet.</p>
+    </div>
+    {% endif %}
+</main>
+
+</body>
+
+</html>
